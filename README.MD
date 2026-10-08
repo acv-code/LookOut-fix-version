@@ -6,7 +6,20 @@
 
 LookOut is an add-on for [Thunderbird](https://www.thunderbird.net/) to interface with Microsoft’s mail tools by decoding metadata and attachments encapsulated/embedded in a [TNEF (Transport Neutral Encapsulation Format)](https://en.wikipedia.org/wiki/Transport_Neutral_Encapsulation_Format) encoded attachment (aka winmail.dat).
 
-Support: [Thunderbird](https://www.thunderbird.net/)
+Support: [Thunderbird](https://www.thunderbird.net/) 128 and newer (ESR and release).
+
+## How it works (version 8 and later)
+
+LookOut is a plain MailExtension (Manifest V3) and uses no Experiment APIs, so it does not need an update for every new Thunderbird version.
+
+When a message with a `winmail.dat` (`application/ms-tnef`) attachment is displayed, the LookOut button in the message header shows the number of files found inside it. Click it to see the files and save them, one by one or all at once.
+
+Limitations, because Thunderbird does not offer them to MailExtensions:
+
+* The decoded files are not added to Thunderbird's attachment pane, and `winmail.dat` is not hidden.
+* Calendar invitations are not passed to Thunderbird's invitation bar; save the `.ics` file and open it instead.
+
+If the TNEF data contains the original HTML message, it still replaces the displayed message body (can be disabled in the options).
 
 **For legacy support please see the [Legacy Branch](https://github.com/TB-throwback/LookOut-fix-version/tree/Legacy)**
 
@@ -31,6 +44,16 @@ Before use, please remove or disable the original LookOut and LookOut+ !
 LookOut is a plugin which allows [Thunderbird](https://www.thunderbird.net/) (and [SeaMonkey](http://www.seamonkey-project.org/)) to interface with Microsoft’s mail tools by decoding metadata and attachments encapsulated/embedded in a TNEF encoded attachment (aka winmail.dat).
 The TNEF decoding engine was inspired (with permission) by the [TNEF project](https://github.com/verdammelt/tnef). LookOut has a full [MAPI](https://en.wikipedia.org/wiki/MAPI) decoder and the ability to transcode some of those properties to [iCalendar (ics)](https://en.wikipedia.org/wiki/ICalendar) and [vCard (vcf)](https://en.wikipedia.org/wiki/VCard) formats.
 As an option all MAPI properties within a email can be viewed so other types of information can be deciphered.
+
+# Development
+
+The add-on is in `src/`. Build an `.xpi` with `src/build.sh` (or `src/build.bat`), or load `src/manifest.json` as a temporary add-on via *Tools > Developer Tools > Debug Add-ons*.
+
+The TNEF decoder (`src/scripts/tnef.mjs`) is plain JavaScript and has automated tests, which need [Node.js](https://nodejs.org/) 22 or newer (no dependencies to install):
+
+    npm test
+
+`npm run fetch-samples` additionally downloads the test files of the [tnef project](https://github.com/verdammelt/tnef), and more (private) samples can be tested via the `LOOKOUT_TNEF_SAMPLES` environment variable. See [test/samples/README.md](test/samples/README.md).
 
 # Debugging
 

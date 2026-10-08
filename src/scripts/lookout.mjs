@@ -1,19 +1,20 @@
-import { tnef_parse } from "/scripts/tnef.mjs"
+import { tnef_parse } from "./tnef.mjs";
+import { resolveMimeType } from "./mime.mjs";
+
+// Read binary strings in chunks, String.fromCharCode() has an argument limit.
+const CHUNK_SIZE = 0x8000;
 
 // Partially implements nsIInputStream.
 // https://udn.realityripple.com/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIInputStream
 class PseudoInputStream {
   constructor() {
-    this.file = null;
-    this.buffer = null;
     this.view = null;
     this.offset = 0;
   }
 
   async setFile(file) {
-    this.file = file;
-    this.buffer = await this.file.arrayBuffer();
-    this.view = new Uint8Array(this.buffer);
+    let buffer = file instanceof ArrayBuffer ? file : await file.arrayBuffer();
+    this.view = new Uint8Array(buffer);
     this.offset = 0;
   }
 
@@ -22,17 +23,16 @@ class PseudoInputStream {
   }
 
   test(bytes) {
-    if (this.available < bytes) {
+    if (this.available() < bytes) {
       throw new Error("Trying to read beyond the end of the arrayBuffer");
     }
   }
 
   readByteArray(bytes) {
     this.test(bytes);
-    let byteArray = [];
-    for (let i = 0; i < bytes; i++) {
-      byteArray[i] = this.view[this.offset + i];
-    }
+    let byteArray = Array.from(
+      this.view.subarray(this.offset, this.offset + bytes)
+    );
     this.offset += bytes;
     return byteArray;
   }
@@ -45,12 +45,16 @@ class PseudoInputStream {
   }
 
   readBytes(bytes) {
-    let binaryString = "";
-    let byteArray = this.readByteArray(bytes);
-    for (let byte of byteArray) {
-      binaryString += `${String.fromCharCode(byte)}`;
+    this.test(bytes);
+    let parts = [];
+    for (let i = 0; i < bytes; i += CHUNK_SIZE) {
+      let end = this.offset + Math.min(i + CHUNK_SIZE, bytes);
+      parts.push(
+        String.fromCharCode.apply(null, this.view.subarray(this.offset + i, end))
+      );
     }
-    return binaryString;
+    this.offset += bytes;
+    return parts.join("");
   }
 
   close() {
@@ -62,40 +66,41 @@ export class TnefExtractor {
   constructor() {
     this.mStream = new PseudoInputStream();
     this.files = [];
-    this.mPartId = 0;
   }
 
-  async parse(file, msgHdr, prefs) {
-    this.mMsgHdr = msgHdr; // TODO: Why does it need it?
-    
+  /**
+   * Decodes a TNEF file (winmail.dat).
+   *
+   * @param {Blob|ArrayBuffer} file - the TNEF data
+   * @param {object} prefs - see storage.mjs
+   * @returns {File[]} the decoded files
+   */
+  async parse(file, prefs) {
     // The TNEF parser uses debug_level.
-    prefs["debug_level"] = prefs["debug_enabled"] ? 10 : 5;
+    prefs = { ...prefs, debug_level: prefs["debug_enabled"] ? 10 : 5 };
 
     await this.mStream.setFile(file);
-    tnef_parse(
-      this.mStream, 
-      this.mMsgHdr, // TODO: Why does it need it?
-      this,
-      prefs
-    );
+    try {
+      tnef_parse(this.mStream, null, this, prefs);
+    } catch (error) {
+      // Truncated or corrupt TNEF: keep what could be decoded so far.
+      console.warn("LookOut: TNEF decoding stopped early", error);
+    }
     return this.files;
   }
 
   onTnefFile(data, filename, content_type, length, date) {
     // Strip away path.
-    filename = filename.split('\\').pop().split('/').pop();
+    filename = (filename || "").split('\\').pop().split('/').pop() || "attachment";
 
-    if (!content_type) {
-      content_type = "application/binary";
-    }
-  
-    // The data is a binary string, but we need an Uint8Array to not trigger utf8
-    // interpretation.
-    let bytes = new Array(data.length);
+    // The data is a binary string, but we need an Uint8Array to not trigger
+    // utf8 interpretation.
+    let bytes = new Uint8Array(data.length);
     for (let i = 0; i < bytes.length; i++) {
       bytes[i] = data.charCodeAt(i) & 0xFF;
     }
-    this.files.push(new File([new Uint8Array(bytes)], filename, {type: content_type}));
-    this.mPartId++;
+    this.files.push(new File([bytes], filename, {
+      type: resolveMimeType(filename, content_type),
+    }));
   }
 }

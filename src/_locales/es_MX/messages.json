@@ -47,12 +47,6 @@
     "prefwindow.title": {
         "message": "Preferencias de LookOut"
     },
-    "remove_winmail_dat_check.accesskey": {
-        "message": "R"
-    },
-    "remove_winmail_dat_check.label": {
-        "message": "Eliminar Winmail.dat"
-    },
     "replace_body_check.accesskey": {
         "message": "R"
     },
@@ -67,5 +61,29 @@
     },
     "junk_tnef_warning": {
         "message": "LookOut no procesó winmail.dat porque este mensaje está en la carpeta de correo no deseado."
+    },
+    "action_title": {
+        "message": "Contenido de winmail.dat"
+    },
+    "popup_title": {
+        "message": "Archivos en winmail.dat"
+    },
+    "popup_loading": {
+        "message": "Decodificando winmail.dat…"
+    },
+    "popup_no_files": {
+        "message": "Este mensaje no tiene adjuntos winmail.dat con archivos."
+    },
+    "popup_decode_error": {
+        "message": "LookOut no pudo decodificar el adjunto winmail.dat."
+    },
+    "popup_download": {
+        "message": "Guardar"
+    },
+    "popup_download_all": {
+        "message": "Guardar todo"
+    },
+    "popup_download_error": {
+        "message": "No se pudo guardar el archivo."
     }
 }

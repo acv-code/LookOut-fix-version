@@ -1,0 +1,15 @@
+{
+  "name": "lookout-fix-version",
+  "private": true,
+  "type": "module",
+  "description": "Development scripts for LookOut (fix version). The add-on itself is in src/.",
+  "license": "MPL-2.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.mjs\"",
+    "make-samples": "node test/tools/make-samples.mjs",
+    "fetch-samples": "node test/tools/fetch-samples.mjs"
+  }
+}

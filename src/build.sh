@@ -30,7 +30,7 @@ build() {
   fi
 
   "$ZIP_CMD" a -tzip "$FILE" \
-    _locales api icons options scripts \
+    _locales icons options popup scripts \
     background.html background.js message-content-script.js changes.txt LICENSE manifest.json
 }
 

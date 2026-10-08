@@ -7,8 +7,7 @@ browser.runtime.onMessage.addListener(message => {
     let banner = document.createElement("div");
 
     banner.id = "lookout-junk-tnef-warning";
-    banner.textContent =
-      "LookOut did not process winmail.dat because this message is in your Junk folder.";
+    banner.textContent = message.message;
 
     banner.style.cssText = `
       background: #fff3cd;

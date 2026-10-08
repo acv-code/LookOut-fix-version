@@ -3,7 +3,6 @@ import * as storage from "../scripts/storage.mjs";
 const USER_OPTIONS = [
   "attach_raw_mapi",
   "disable_filename_character_set",
-  "remove_winmail_dat",
   "replace_body",
   "strict_contenttype",
   "debug_enabled",

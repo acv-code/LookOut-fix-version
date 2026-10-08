@@ -1,2 +1,4 @@
-
 release.bat
+node_modules/
+test/samples/external/
+*.xpi

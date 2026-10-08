@@ -1,15 +1,17 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
   "browser_specific_settings": {
     "gecko": {
       "id": "lookout@s3_fix_version",
-      "strict_min_version": "140.0",
-      "strict_max_version": "155.*"
+      "strict_min_version": "128.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   },
-  "version": "7.4",
+  "version": "8.0",
   "default_locale": "en-US",
   "author": "Dugite-Code",
   "homepage_url": "https://github.com/TB-throwback/LookOut-fix-version/",
@@ -18,44 +20,24 @@
     "48": "icons/LOicon-48.png",
     "64": "icons/LOicon-64.png"
   },
-  "experiment_apis": {
-    "Attachment": {
-      "schema": "api/Attachment/schema.json",
-      "parent": {
-        "scopes": [
-          "addon_parent"
-        ],
-        "paths": [
-          [
-            "Attachment"
-          ]
-        ],
-        "script": "api/Attachment/implementation.js"
-      }
-    },
-    "LegacyPrefs": {
-      "schema": "api/LegacyPrefs/schema.json",
-      "parent": {
-        "scopes": [
-          "addon_parent"
-        ],
-        "paths": [
-          [
-            "LegacyPrefs"
-          ]
-        ],
-        "script": "api/LegacyPrefs/implementation.js"
-      }
-    }
-  },
   "background": {
     "page": "background.html"
+  },
+  "message_display_action": {
+    "default_title": "__MSG_action_title__",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "32": "icons/LOicon-32.png",
+      "48": "icons/LOicon-48.png",
+      "64": "icons/LOicon-64.png"
+    }
   },
   "permissions": [
     "messagesRead",
     "accountsRead",
     "scripting",
-    "storage"
+    "storage",
+    "downloads"
   ],
   "options_ui": {
     "page": "options/options.html"

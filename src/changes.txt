@@ -1,3 +1,22 @@
+8.0
+* Rewritten as a plain MailExtension (Manifest V3) without Experiment APIs, so
+  it no longer breaks with every Thunderbird release. Requires Thunderbird 128+,
+  no maximum version.
+* Decoded files are now listed in a popup of the "winmail.dat" button in the
+  message header (with the number of files as badge) and saved via the
+  downloads API, one by one or all at once. Thunderbird does not allow
+  add-ons to add attachments to the attachment pane anymore, so winmail.dat
+  stays visible there and calendar invitations are no longer passed to the
+  invitation bar (the .ics file can be saved and opened instead).
+* Fix file names with non-ASCII characters (accents, ñ, Cyrillic, Japanese):
+  Unicode names are no longer converted twice, UTF-8 names are detected.
+* Fix decoding stopping at the first empty attachment.
+* Fix file names of a previous message being taken into account for duplicates.
+* Duplicate file names keep their extension ("name (1).pdf").
+* Guess the MIME type from the file extension if the TNEF data has none.
+* Removed the "Remove Winmail.dat" option.
+* Added automated tests for the TNEF decoder (npm test).
+
 7.4
 Note: This version has been developed using LLM's.
 * Re-impliment Calendar event actions (Note: using legacy iMIP bar).

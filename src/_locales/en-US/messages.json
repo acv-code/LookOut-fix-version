@@ -47,12 +47,6 @@
     "prefwindow.title": {
         "message": "LookOut preferences"
     },
-    "remove_winmail_dat_check.accesskey": {
-        "message": "R"
-    },
-    "remove_winmail_dat_check.label": {
-        "message": "Remove Winmail.dat"
-    },
     "replace_body_check.accesskey": {
         "message": "B"
     },
@@ -67,5 +61,29 @@
     },
     "junk_tnef_warning": {
         "message": "LookOut did not process winmail.dat because this message is in your Junk folder."
+    },
+    "action_title": {
+        "message": "Winmail.dat contents"
+    },
+    "popup_title": {
+        "message": "Files in winmail.dat"
+    },
+    "popup_loading": {
+        "message": "Decoding winmail.dat…"
+    },
+    "popup_no_files": {
+        "message": "This message has no winmail.dat attachments with files."
+    },
+    "popup_decode_error": {
+        "message": "LookOut could not decode the winmail.dat attachment."
+    },
+    "popup_download": {
+        "message": "Save"
+    },
+    "popup_download_all": {
+        "message": "Save all"
+    },
+    "popup_download_error": {
+        "message": "The file could not be saved."
     }
 }

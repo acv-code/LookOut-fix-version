@@ -124,7 +124,7 @@ function tnef_attr_name_to_string(attr_name) {
 
 function assert(condition) {
   if (!condition)
-    tnef_log_msg("Assertion failed in " + assert.caller.name + "( )", 5);
+    tnef_log_msg("TNEF: assertion failed", 5);
 }
 
 function tnef_log_msg(msg, level) {
@@ -339,7 +339,7 @@ function tnef_file_name_used(fname, files) {
     return (0);
 
   for (i = 0; i < files.length; i++)
-    if (files[i].name == fname)
+    if (files[i] == fname)
       return (1);
   return (0);
 }
@@ -363,48 +363,77 @@ function tnef_codepage_to_charset(cp) {
     case 1256: return "WINDOWS-1256"; // Arabic
     case 1257: return "WINDOWS-1257"; // Baltic
     case 1258: return "WINDOWS-1258"; // Vietnam
+    case 65001: return "UTF-8";
     default: return null;
   }
 }
 
-function tnef_file_munge_fname(fname, files, code_page) {
+// Converts an 8 bit TNEF/MAPI string (one char per byte) to Unicode.
+function tnef_decode_8bit_string(str, code_page) {
+  // Plain ASCII needs no conversion.
+  if (!/[\x80-\xff]/.test(str))
+    return (str);
+
+  let bytes = Uint8Array.from(str, function (cur_char) { return cur_char.charCodeAt(0); });
+
+  // Some gateways store UTF-8 regardless of the declared code page. Text in a
+  // legacy code page is practically never valid UTF-8, so try that first.
+  try {
+    return (new TextDecoder("UTF-8", { fatal: true }).decode(bytes));
+  } catch (e) {
+    // Not UTF-8.
+  }
+
+  // Unknown code pages fall back to Western, the most common one.
+  let charset = tnef_codepage_to_charset(code_page) || "WINDOWS-1252";
+  tnef_log_msg("Lookout: convert file name from charset: " + charset, 7);
+  try {
+    return (new TextDecoder(charset).decode(bytes));
+  } catch (e) {
+    tnef_log_msg("Lookout: failed to convert file name from charset: " + charset + e, 4);
+  }
+  return (str);
+}
+
+// Makes a file name unique by adding " (n)" before its extension.
+function tnef_file_unique_fname(fname, files) {
+  var dot = fname.lastIndexOf(".");
+  var base = dot > 0 ? fname.substring(0, dot) : fname;
+  var ext = dot > 0 ? fname.substring(dot) : "";
+  var file = fname;
+  var count = 1;
+
+  while (tnef_file_name_used(file, files)) {
+    file = base + " (" + count + ")" + ext;
+    count++;
+  }
+  return (file);
+}
+
+// is_unicode: fname comes from a PT_UNICODE property and is already decoded.
+function tnef_file_munge_fname(fname, files, code_page, is_unicode) {
   var file = null;
   var count = 0;
 
+  // Strip C style string terminators.
+  fname = fname ? fname.split("\0").join('') : "";
+
   // If we were not given a filename make one up
-  if (!fname || fname.length == 0) {
+  if (fname.length == 0) {
     //debug_print( "No file name specified, using default.\n" );
     fname = "tnef-part-";
     do {
       file = fname + count;
       count++;
     } while (tnef_file_name_used(file, files));
-  } else if (prefs["disable_filename_character_set"]) {
-    file = fname;
-  } else {
-    let charset = tnef_codepage_to_charset(code_page);
-    tnef_log_msg("Lookout: convert file name from charset: " + charset, 7);
-    if (charset != null) {
-      try {
-        let decoder = new TextDecoder(charset);
-        var fname2 = decoder.decode(new Uint8Array(fname.split('').map(function (cur_char) { return cur_char.charCodeAt(0); })));
-        try {
-          decodeURIComponent(escape(fname2));
-        } catch (e) {
-          fname = fname2;
-        }
-      } catch (e) {
-        tnef_log_msg("Lookout: failed to convert file name from charset: " + charset + e, 4);
-      }
-    }
-    file = fname;
-    while (tnef_file_name_used(file, files)) {
-      file = fname + count;
-      count++;
-    }
+    return (file);
   }
 
-  return (file.split("\0").join(''));
+  if (!is_unicode && !prefs["disable_filename_character_set"]) {
+    fname = tnef_decode_8bit_string(fname, code_page);
+  }
+
+  return (tnef_file_unique_fname(fname, files));
 }
 
 function tnef_file_notify(file, listener, is_final) {
@@ -424,7 +453,12 @@ function tnef_file_notify(file, listener, is_final) {
     throw new Error("tnef_file_notify() should now only be called once done, but is_final indicated otherwise. Something is wrong.")
   }
 
-  if (file.data && listener.onTnefFile) {
+  // Remember the final file name to avoid collisions with later files.
+  if (file.name && file.pkg && file.pkg.files)
+    file.pkg.files.push(file.name);
+
+  // Empty files (data == "") are valid attachments too.
+  if (file.data != null && listener.onTnefFile) {
     listener.onTnefFile(file.data, file.name, file.mime_type, file.len, file.date);
   }
 }
@@ -437,7 +471,9 @@ function tnef_file_add_mapi_attrs(file, files, pkg, attrs) {
     if (attrs[i].num_values) {
       switch (attrs[i].name) {
         case MAPI_ATTACH_LONG_FILENAME:
-          file.name = tnef_file_munge_fname(attrs[i].values[0], files, pkg.code_page);
+          file.name = tnef_file_munge_fname(
+            attrs[i].values[0], files, pkg.code_page,
+            attrs[i].type == MAPI_UNICODE_STRING);
           break;
 
         case MAPI_ATTACH_DATA_OBJ:
@@ -565,7 +601,8 @@ function tnef_attr_check_checksum(attr, checksum) {
 function tnef_attr_incomplete(attr) {
   assert(attr);
 
-  return (attr.len >= 0 && !(attr.buf && attr.buf.length == attr.len));
+  // Note: an empty attribute has an empty (falsy) buf, but is complete.
+  return (attr.len >= 0 && !(attr.buf != null && attr.buf.length == attr.len));
 }
 
 
@@ -1591,6 +1628,8 @@ export function tnef_parse(instrm, msg_header, listener, _prefs) {
   tnef_log_msg("TNEF: new TnefPackage()", 6);
   pkg = new TnefPackage();
   pkg.msg_header = msg_header;
+  // Do not share the file name list (defined on the prototype) between runs.
+  pkg.files = [];
 
   // check that this is in fact a TNEF file
   sig = GETINT32(instrm.readByteArray(4));
@@ -1681,10 +1720,6 @@ export function tnef_parse(instrm, msg_header, listener, _prefs) {
         if (!pkg.cur_file)
           pkg.cur_file = new TnefFile(pkg);
         tnef_file_add_attr(pkg.cur_file, pkg.files, pkg.cur_attr, pkg, listener);
-
-        // remember attachment file name to avoid collisions
-        if (pkg.cur_file.name && pkg.cur_file.len > 0)
-          pkg.files.push(pkg.cur_file.name);
         break;
       default:
         tnef_log_msg("Invalid lvl type on attribute: " + pkg.cur_attr.lvl_type, 5);
