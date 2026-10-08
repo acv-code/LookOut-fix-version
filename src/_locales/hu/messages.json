@@ -64,5 +64,32 @@
     },
     "junk_tnef_warning": {
         "message": "A LookOut nem dolgozta fel a winmail.dat fájlt, mert ez az üzenet a Levélszemét mappában található."
+    },
+    "action_title": {
+        "message": "A winmail.dat tartalma"
+    },
+    "popup_title": {
+        "message": "Fájlok a winmail.dat-ban"
+    },
+    "popup_loading": {
+        "message": "A winmail.dat dekódolása…"
+    },
+    "popup_no_files": {
+        "message": "Ebben az üzenetben nincs fájlokat tartalmazó winmail.dat melléklet."
+    },
+    "popup_decode_error": {
+        "message": "A LookOut nem tudta dekódolni a winmail.dat mellékletet."
+    },
+    "popup_download": {
+        "message": "Mentés"
+    },
+    "popup_download_all": {
+        "message": "Összes mentése"
+    },
+    "popup_download_error": {
+        "message": "A fájlt nem sikerült menteni."
+    },
+    "prefwindow.title": {
+        "message": "MutasdMeg! beállítások"
     }
 }

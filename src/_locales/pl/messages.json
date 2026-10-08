@@ -67,5 +67,29 @@
     },
     "junk_tnef_warning": {
         "message": "LookOut nie przetworzył pliku winmail.dat, ponieważ ta wiadomość znajduje się w folderze Niechciane."
+    },
+    "action_title": {
+        "message": "Zawartość winmail.dat"
+    },
+    "popup_title": {
+        "message": "Pliki w winmail.dat"
+    },
+    "popup_loading": {
+        "message": "Dekodowanie winmail.dat…"
+    },
+    "popup_no_files": {
+        "message": "Ta wiadomość nie zawiera załączników winmail.dat z plikami."
+    },
+    "popup_decode_error": {
+        "message": "LookOut nie mógł zdekodować załącznika winmail.dat."
+    },
+    "popup_download": {
+        "message": "Zapisz"
+    },
+    "popup_download_all": {
+        "message": "Zapisz wszystkie"
+    },
+    "popup_download_error": {
+        "message": "Nie udało się zapisać pliku."
     }
 }

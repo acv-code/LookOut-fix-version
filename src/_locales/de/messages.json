@@ -64,5 +64,32 @@
     },
     "junk_tnef_warning": {
         "message": "LookOut hat winmail.dat nicht verarbeitet, da sich diese Nachricht im Junk-Ordner befindet."
+    },
+    "action_title": {
+        "message": "Inhalt von winmail.dat"
+    },
+    "popup_title": {
+        "message": "Dateien in winmail.dat"
+    },
+    "popup_loading": {
+        "message": "winmail.dat wird dekodiert …"
+    },
+    "popup_no_files": {
+        "message": "Diese Nachricht enthält keine winmail.dat-Anhänge mit Dateien."
+    },
+    "popup_decode_error": {
+        "message": "LookOut konnte den winmail.dat-Anhang nicht dekodieren."
+    },
+    "popup_download": {
+        "message": "Speichern"
+    },
+    "popup_download_all": {
+        "message": "Alle speichern"
+    },
+    "popup_download_error": {
+        "message": "Die Datei konnte nicht gespeichert werden."
+    },
+    "prefwindow.title": {
+        "message": "LookOut-Einstellungen"
     }
 }

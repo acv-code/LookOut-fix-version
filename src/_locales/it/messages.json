@@ -67,5 +67,29 @@
     },
     "junk_tnef_warning": {
         "message": "LookOut non ha elaborato winmail.dat perché questo messaggio si trova nella cartella Posta indesiderata."
+    },
+    "action_title": {
+        "message": "Contenuto di winmail.dat"
+    },
+    "popup_title": {
+        "message": "File in winmail.dat"
+    },
+    "popup_loading": {
+        "message": "Decodifica di winmail.dat in corso…"
+    },
+    "popup_no_files": {
+        "message": "Questo messaggio non contiene allegati winmail.dat con file."
+    },
+    "popup_decode_error": {
+        "message": "LookOut non è riuscito a decodificare l'allegato winmail.dat."
+    },
+    "popup_download": {
+        "message": "Salva"
+    },
+    "popup_download_all": {
+        "message": "Salva tutto"
+    },
+    "popup_download_error": {
+        "message": "Impossibile salvare il file."
     }
 }

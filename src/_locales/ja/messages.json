@@ -67,6 +67,29 @@
     },
     "junk_tnef_warning": {
         "message": "このメッセージは迷惑メールフォルダーにあるため、LookOut は winmail.dat を処理しませんでした。"
+    },
+    "action_title": {
+        "message": "winmail.dat の内容"
+    },
+    "popup_title": {
+        "message": "winmail.dat 内のファイル"
+    },
+    "popup_loading": {
+        "message": "winmail.dat をデコードしています…"
+    },
+    "popup_no_files": {
+        "message": "このメッセージにはファイルを含む winmail.dat 添付ファイルがありません。"
+    },
+    "popup_decode_error": {
+        "message": "LookOut は winmail.dat 添付ファイルをデコードできませんでした。"
+    },
+    "popup_download": {
+        "message": "保存"
+    },
+    "popup_download_all": {
+        "message": "すべて保存"
+    },
+    "popup_download_error": {
+        "message": "ファイルを保存できませんでした。"
     }
-
 }

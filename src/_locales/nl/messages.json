@@ -67,5 +67,29 @@
     },
     "junk_tnef_warning": {
         "message": "LookOut heeft winmail.dat niet verwerkt omdat dit bericht zich in de map Ongewenste berichten bevindt."
+    },
+    "action_title": {
+        "message": "Inhoud van winmail.dat"
+    },
+    "popup_title": {
+        "message": "Bestanden in winmail.dat"
+    },
+    "popup_loading": {
+        "message": "winmail.dat wordt gedecodeerd…"
+    },
+    "popup_no_files": {
+        "message": "Dit bericht bevat geen winmail.dat-bijlagen met bestanden."
+    },
+    "popup_decode_error": {
+        "message": "LookOut kon de winmail.dat-bijlage niet decoderen."
+    },
+    "popup_download": {
+        "message": "Opslaan"
+    },
+    "popup_download_all": {
+        "message": "Alles opslaan"
+    },
+    "popup_download_error": {
+        "message": "Het bestand kon niet worden opgeslagen."
     }
 }
